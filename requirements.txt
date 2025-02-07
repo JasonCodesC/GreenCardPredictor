@@ -1,0 +1,10 @@
+flask
+pandas
+xgboost
+openai
+numpy
+matplotlib
+gensim
+torch
+scikit-learn
+shap

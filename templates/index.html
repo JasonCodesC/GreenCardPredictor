@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Improve Your Chances to Migrate</title>
+  <style>
+    body {
+      background: #f4f7f8;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 90%;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      margin: 0;
+      color: #333;
+      font-size: 24px;
+    }
+    .header img {
+      max-width: 100px;
+      height: auto;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+    }
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <!-- Root element for our React app -->
+  <div id="root"></div>
+
+  {% raw %}
+  <!-- Load React, ReactDOM, and Babel -->
+  <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Our React code -->
+  <script type="text/babel">
+    const { useState } = React;
+
+    function App() {
+      // Define arrays for the drop-down options (excluding the default option)
+      const countryOptions = [
+        'ALBANIA','AFGHANISTAN','ALGERIA','ANDORRA','ANTIGUA AND BARBUDA','ARGENTINA','ARMENIA',
+        'AUSTRALIA','AUSTRIA','BANGLADESH','BAHAMAS','BAHRAIN','BARBADOS','BELARUS','BELGIUM',
+        'BELIZE','BENIN','BOLIVIA','BRAZIL','BRUNEI','BULGARIA','BURKINA FASO','BURMA (MYANMAR)',
+        'BURUNDI','CAMBODIA','CAMEROON','CANADA','CAPE VERDE','CENTRAL AFRICAN REPUBLIC','CHAD',
+        'CHILE','CHINA','COLOMBIA','COSTA RICA',"COTE d'IVOIRE",'CUBA','CYPRUS','CZECH REPUBLIC',
+        'DEMOCRATIC REPUBLIC OF CONGO','DENMARK','DOMINICA','DOMINICAN REPUBLIC','EGYPT','EL SALVADOR',
+        'EQUATORIAL GUINEA','ERITREA','ESTONIA','ETHIOPIA','FINLAND','FRANCE','GABON','GAMBIA',
+        'GEORGIA','GERMANY','GHANA','GREECE','GUATEMALA','GUINEA','GUYANA','HAITI','HONDURAS',
+        'HONG KONG','HUNGARY','ICELAND','INDIA','INDONESIA','IRAN','IRAQ','IRELAND','ISRAEL','ITALY',
+        'JAMAICA','JAPAN','JORDAN','KAZAKHSTAN','KENYA','KUWAIT','KYRGYZSTAN','LAOS','LATVIA',
+        'LEBANON','LIBERIA','LIBYA','LIECHTENSTEIN','LITHUANIA','LUXEMBOURG','MACEDONIA','MACAU',
+        'MADAGASCAR','MALAWI','MALAYSIA','MALDIVES','MALI','MALTA','MARSHALL ISLANDS','MAURITANIA',
+        'MAURITIUS','MEXICO','MICRONESIA','MOLDOVA','MONACO','MONGOLIA','MONTENEGRO','MOROCCO',
+        'MOZAMBIQUE','NAMIBIA','NAURU','NEPAL','NETHERLANDS','NEW ZEALAND','NICARAGUA','NIGER',
+        'NIGERIA','NORWAY','OMAN','PAKISTAN','PALAU','PALESTINIAN TERRITORIES','PANAMA','PAPUA NEW GUINEA',
+        'PARAGUAY','PERU','PHILIPPINES','POLAND','PORTUGAL','QATAR','ROMANIA','RUSSIA','RWANDA',
+        'SAMOA','SAN MARINO','SAUDI ARABIA','SENEGAL','SERBIA','SEYCHELLES','SIERRA LEONE','SINGAPORE',
+        'SLOVAKIA','SLOVENIA','SOLOMON ISLANDS','SOMALIA','SOUTH AFRICA','SOUTH KOREA','SOUTH SUDAN',
+        'SPAIN','SRI LANKA','ST KITTS AND NEVIS','ST LUCIA','ST VINCENT','SURINAME','SWAZILAND','SWEDEN',
+        'SWITZERLAND','SYRIA','TAJIKISTAN','TANZANIA','THAILAND','TIMOR-LESTE','TOGO','TONGA','TRINIDAD AND TOBAGO',
+        'TUNISIA','TURKEY','TURKMENISTAN','TUVALU','UGANDA','UKRAINE','UNITED ARAB EMIRATES','UNITED KINGDOM',
+        'UNITED STATES OF AMERICA','URUGUAY','UZBEKISTAN','VANUATU','VATICAN CITY','VENEZUELA','VIETNAM',
+        'YEMEN','ZAMBIA','ZIMBABWE'
+      ].sort();
+
+      const classOptions = [
+        'H-1B','B-2','J-1','L-1','L-2','No Visa/Not in USA','O-1','E-2','F-1','TN','H-4','H-2B',
+        'E-3','VWT','TPS','Parolee','A1/A2','B-1','CW-1','H-2A','F-2','E-1','J-2','P-1','H-1B1',
+        'G-4','M-2','R-1','O-3','EWI','VWB','H-1A','O-2','TD','G-5','P-3','G-1','U-1','M-1','I',
+        'C-1','G-3','C-3','H-3','N','T-2','T-1','A-3','P-4','C-2','K-2','R-2','K-1','P-2','T-3','Q'
+      ].sort();
+
+      const yesNoOptions = ["Y", "N"]; // for fields with only yes/no
+      const yesNoNAOptions = ["Y", "N", "N/A"]; // for fields with three options
+
+      const educationOptions = [
+        "Associates", "Bachelor's", "Doctorate", "High School", "Master's", "Not Applicable", "Other"
+      ].sort();
+      // (Alphabetical order: associates, bachelor's, doctorate, high school, master's, not applicable, other)
+
+      const yearOptions = ["2022", "2023", "2024"].sort();
+
+      // Initial form state – note that fields not in the "do not require star" list are required.
+      const [formData, setFormData] = useState({
+        // Personal background features
+        countryOfCitizenship: '',             // required
+        classOfAdmission: '',                 // NOT required
+        yearfiled: '',                        // required
+
+        // Education/training features
+        foreignWorkerEducation: '',           // NOT required
+        foreignWorkerInfoMajor: '',           // NOT required
+        foreignWorkerInstOfEd: '',            // NOT required
+
+        // Work experience features
+        foreignWorkerReqExperience: '',       // NOT required
+        foreignWorkerExpWithEmpl: '',         // NOT required
+        foreignWorkerCurrEmployed: '',        // required
+
+        // Job/employer related features
+        jobTitle: '',                         // required
+        minimumEducation: '',                 // NOT required
+        majorFieldOfStudy: '',                // NOT required
+        foreignLanguageRequired: '',          // required
+      });
+
+      const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevState => ({
+          ...prevState,
+          [name]: value
+        }));
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("Form Data:", formData);       
+
+        fetch('/receive-data', {  // Ensure your Flask route is named correctly
+          method: 'POST',         // Change from GET to POST
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)  // Send formData directly
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Response from Flask:", data);
+          if(data.gpt_response){
+            alert("Response: " + data.gpt_response);
+          } else {
+            alert("Error: " + data.error);
+          }
+        })
+        .catch(err => {
+          console.error("Error submitting form:", err);
+          alert("Error submitting form");
+        });
+      };
+
+
+      return (
+        <div className="container">
+          <div className="header">
+            <h1>Improve your chances to migrate</h1>
+          </div>
+          <form onSubmit={handleSubmit}>
+            {/* PERSONAL BACKGROUND FEATURES */}
+            <div className="form-group">
+              <label htmlFor="countryOfCitizenship">
+                Country of Citizenship <span style={{color:"red"}}>*</span>
+              </label>
+              <select
+                id="countryOfCitizenship"
+                name="countryOfCitizenship"
+                value={formData.countryOfCitizenship}
+                onChange={handleChange}
+                required
+              >
+                <option value="select">SELECT COUNTRY</option>
+                {countryOptions.map(country => (
+                  <option key={country} value={country}>{country}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="classOfAdmission">
+                Class of Admission:
+              </label>
+              <select
+                id="classOfAdmission"
+                name="classOfAdmission"
+                value={formData.classOfAdmission}
+                onChange={handleChange}
+              >
+                <option value="select">SELECT CLASS</option>
+                {classOptions.map(item => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="yearfiled">
+                Year Filed <span style={{color:"red"}}>*</span>
+              </label>
+              <select
+                id="yearfiled"
+                name="yearfiled"
+                value={formData.yearfiled}
+                onChange={handleChange}
+                required
+              >
+                <option value="select">SELECT</option>
+                {yearOptions.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* EDUCATION/TRAINING FEATURES */}
+            <div className="form-group">
+              <label htmlFor="foreignWorkerEducation">
+                Highest Education Level Completed:
+              </label>
+              <select
+                id="foreignWorkerEducation"
+                name="foreignWorkerEducation"
+                value={formData.foreignWorkerEducation}
+                onChange={handleChange}
+              >
+                <option value="select">SELECT</option>
+                {educationOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+            {formData.foreignWorkerEducation === "other" && (
+              <div className="form-group">
+                <label htmlFor="otherEducationLevel">
+                  Other Education Level Description: <span style={{color:"red"}}>*</span>
+                </label>
+                <input
+                  type="text"
+                  id="otherEducationLevel"
+                  name="otherEducationLevel"
+                  value={formData.otherEducationLevel}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            )}
+
+            <div className="form-group">
+              <label htmlFor="foreignWorkerInfoMajor">
+                Foreign Worker Major Information:
+              </label>
+              <input
+                type="text"
+                id="foreignWorkerInfoMajor"
+                name="foreignWorkerInfoMajor"
+                value={formData.foreignWorkerInfoMajor}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="foreignWorkerInstOfEd">
+                Institution of Education:
+              </label>
+              <input
+                type="text"
+                id="foreignWorkerInstOfEd"
+                name="foreignWorkerInstOfEd"
+                value={formData.foreignWorkerInstOfEd}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* WORK EXPERIENCE FEATURES */}
+            <div className="form-group">
+              <label htmlFor="foreignWorkerReqExperience">
+                Foreign Worker Required Experience?
+              </label>
+              <select
+                id="foreignWorkerReqExperience"
+                name="foreignWorkerReqExperience"
+                value={formData.foreignWorkerReqExperience}
+                onChange={handleChange}
+              >
+                <option value="select">SELECT</option>
+                {yesNoOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="foreignWorkerExpWithEmpl">
+                Experience with Employer? 
+              </label>
+              <select
+                id="foreignWorkerExpWithEmpl"
+                name="foreignWorkerExpWithEmpl"
+                value={formData.foreignWorkerExpWithEmpl}
+                onChange={handleChange}
+              >
+                <option value="select">SELECT</option>
+                {yesNoNAOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="foreignWorkerCurrEmployed">
+                Currently Employed? <span style={{color:"red"}}>*</span>
+              </label>
+              <select
+                id="foreignWorkerCurrEmployed"
+                name="foreignWorkerCurrEmployed"
+                value={formData.foreignWorkerCurrEmployed}
+                onChange={handleChange}
+                required
+              >
+                <option value="select">SELECT</option>
+                {yesNoNAOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* JOB/EMPLOYER-RELATED FEATURES */}
+            <div className="form-group">
+              <label htmlFor="jobTitle">
+                Job Title <span style={{color:"red"}}>*</span>
+              </label>
+              <input
+                type="text"
+                id="jobTitle"
+                name="jobTitle"
+                value={formData.jobTitle}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="minimumEducation">
+                Minimum Education Required:
+              </label>
+              <select
+                id="minimumEducation"
+                name="minimumEducation"
+                value={formData.minimumEducation}
+                onChange={handleChange}
+              >
+                <option value="select">SELECT</option>
+                {educationOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="majorFieldOfStudy">
+                Major Field of Study:
+              </label>
+              <input
+                type="text"
+                id="majorFieldOfStudy"
+                name="majorFieldOfStudy"
+                value={formData.majorFieldOfStudy}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="foreignLanguageRequired">
+                Foreign Language Required? <span style={{color:"red"}}>*</span>
+              </label>
+              <select
+                id="foreignLanguageRequired"
+                name="foreignLanguageRequired"
+                value={formData.foreignLanguageRequired}
+                onChange={handleChange}
+                required
+              >
+                <option value="select">SELECT</option>
+                {yesNoNAOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <button type="submit">Submit</button>
+            </div>
+
+          </form>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+  {% endraw %}
+</body>
+</html>
